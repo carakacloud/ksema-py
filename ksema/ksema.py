@@ -1,8 +1,6 @@
-import requests
 import json
-import tlslite
-from object import *
-from operation import *
+from .object import *
+from .operation import *
 from tlslite import *
 
 class Ksema:

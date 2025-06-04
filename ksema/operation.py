@@ -1,9 +1,7 @@
 import base64
 import json
 import struct
-import requests
-import tlslite
-from object import *
+from .object import *
 from tlslite import *
 
 def get_return_code_message(code):
