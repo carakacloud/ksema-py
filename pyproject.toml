@@ -1,0 +1,8 @@
+[project]
+name = "KSEMA SDK"
+version = "0.1"
+description = "KSEMA SDK for Python"
+dependencies = [
+    "kyber-py",
+    "tlslite-ng"
+]
