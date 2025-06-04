@@ -1,5 +1,5 @@
 [project]
-name = "KSEMA SDK"
+name = "ksema-py"
 version = "0.1"
 description = "KSEMA SDK for Python"
 dependencies = [
