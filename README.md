@@ -14,33 +14,31 @@ pip install git+https://github.com/carakacloud/ksema-py.git
 import os
 from ksema import Ksema
 
-func main() {
-	ksemaServerIp := os.getenv("KSEMA_HOST")
-	ksemaAPIKey := os.getenv("KSEMA_API_KEY")
-	ksemaPIN := os.getenv("KSEMA_PIN")
+ksemaServerIp := os.getenv("KSEMA_HOST")
+ksemaAPIKey := os.getenv("KSEMA_API_KEY")
+ksemaPIN := os.getenv("KSEMA_PIN")
 
-	user = Ksema(ksemaServerIp, ksemaAPIKey, ksemaPIN)
+user = Ksema(ksemaServerIp, ksemaAPIKey, ksemaPIN)
 
-	try:
-        if not user.ping():
-            sys.exit("Failed to ping server (returned False)")
-    except Exception as e:
-        sys.exit(f"Failed to ping server (exception: {e})")
+try:
+    if not user.ping():
+        sys.exit("Failed to ping server (returned False)")
+except Exception as e:
+    sys.exit(f"Failed to ping server (exception: {e})")
 
-	message = b"Hello, this is a secret message!"
+message = b"Hello, this is a secret message!"
 
-    try:
-    	encrypted = user.encrypt(message, "")
-    except Exception as e:
-		print("Failed to encrypt")
+try:
+    encrypted = user.encrypt(message, "")
+except Exception as e:
+    print("Failed to encrypt")
 
-	print(f"Encrypted: {encrypted}")
+print(f"Encrypted: {encrypted}")
 
-    try:
-    	decrypted = user.decrypt(encrypted, "")
-    except Exception as e:
-		print("Failed to decrypt")
+try:
+    decrypted = user.decrypt(encrypted, "")
+except Exception as e:
+    print("Failed to decrypt")
 
-	print(f"Decrypted: {decrypted.decode()}")
-}
+print(f"Decrypted: {decrypted.decode()}")
 ```
