@@ -1,1 +1,1 @@
-from ksema import Ksema
+from .ksema import Ksema
