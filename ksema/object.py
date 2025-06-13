@@ -1,8 +1,6 @@
 from dataclasses import dataclass
 from typing import Optional, Dict
 
-# Data classes for JSON serialization/deserialization
-
 @dataclass
 class Data:
     message: str

@@ -11,7 +11,6 @@ class Ksema:
         self.sess_id = None
         self.user_type = None
 
-        # Authenticate immediately; raise if fails
         if not self.auth():
             raise Exception("Authentication failed")
 
@@ -23,17 +22,17 @@ class Ksema:
         json_data = json.dumps(payload)
         content_length = len(json_data)
 
-        # Step 1: Open a socket
-        sock = socket.create_connection((self.server_ip, 443))  # Replace 443 if needed
+        # Open a socket
+        sock = socket.create_connection((self.server_ip, 443))
 
         settings = HandshakeSettings()
         settings.keyShares = ["x25519mlkem768"]
 
-        # Step 2: Wrap socket in TLS
+        # Wrap socket in TLS
         tls_conn = TLSConnection(sock)
         tls_conn.handshakeClientCert()
 
-        # Step 3: Create raw HTTP POST request
+        # Create raw HTTP POST request
         request = (
             f"POST /api/hsm/auth HTTP/1.1\r\n"
             f"Host: {self.server_ip}\r\n"
@@ -46,7 +45,7 @@ class Ksema:
 
         tls_conn.write(request.encode())
 
-        # Step 4: Read full response
+        # Read full response
         response = b""
         while True:
             chunk = tls_conn.read(4096)
@@ -56,7 +55,7 @@ class Ksema:
 
         tls_conn.close()
 
-        # Step 5: Parse HTTP response
+        # Parse HTTP response
         header_data, _, body = response.partition(b"\r\n\r\n")
         status_line = header_data.split(b"\r\n")[0]
         status_code = int(status_line.split()[1])
