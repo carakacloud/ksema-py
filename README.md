@@ -14,9 +14,9 @@ pip install git+https://github.com/carakacloud/ksema-py.git
 import os
 from ksema import Ksema
 
-ksemaServerIp := os.getenv("KSEMA_HOST")
-ksemaAPIKey := os.getenv("KSEMA_API_KEY")
-ksemaPIN := os.getenv("KSEMA_PIN")
+ksemaServerIp = os.getenv("KSEMA_HOST")
+ksemaAPIKey = os.getenv("KSEMA_API_KEY")
+ksemaPIN = os.getenv("KSEMA_PIN")
 
 user = Ksema(ksemaServerIp, ksemaAPIKey, ksemaPIN)
 
