@@ -704,6 +704,119 @@ def operation_set_iv(session_id, server_ip, data: bytes):
     
     return True
 
+def operation_change_pin(session_id, server_ip, old_pin: str, new_pin: str):
+    url = f"https://{server_ip}/api/hsm/request"
+    payload = {
+        "SessionID": session_id,
+        "Operation": "CHANGEPIN",
+        "Label": old_pin,
+        "Data": base64.b64encode(new_pin.encode()).decode()
+    }
+    json_data = json.dumps(payload)
+    content_length = len(json_data)
+
+    sock = socket.create_connection((server_ip, 443))
+
+    settings = HandshakeSettings()
+    settings.keyShares = ["x25519mlkem768"]
+
+    tls_conn = TLSConnection(sock)
+    tls_conn.handshakeClientCert()
+
+    request = (
+        f"POST {url} HTTP/1.1\r\n"
+        f"Host: {server_ip}\r\n"
+        "Content-Type: application/json\r\n"
+        f"Content-Length: {content_length}\r\n"
+        "Connection: close\r\n"
+        "\r\n"
+        f"{json_data}"
+    )
+
+    tls_conn.write(request.encode())
+
+    response = b""
+    while True:
+        chunk = tls_conn.read(4096)
+        if not chunk:
+            break
+        response += chunk
+
+    tls_conn.close()
+
+    header_data, _, body = response.partition(b"\r\n\r\n")
+    status_line = header_data.split(b"\r\n")[0]
+    status_code = int(status_line.split()[1])
+
+    if status_code != 200:
+        raise Exception(f"server returned status {status_code}")
+
+    res = json.loads(body.decode())
+    if not res.get("success", False):
+        error_msg = res.get("ErrorMsg") or "return changepin request is false"
+        raise Exception(error_msg)
+    if res["data"]["retCode"] != SUCCESS:
+        raise Exception(get_return_code_message(res["data"]["retCode"]))
+
+    apikey = base64.b64decode(res["data"]["message"])
+    return apikey
+
+
+def operation_change_label(session_id, server_ip, key_label: str, new_label: str):
+    url = f"https://{server_ip}/api/hsm/request"
+    payload = {
+        "SessionID": session_id,
+        "Operation": "CHANGELABEL",
+        "Label": key_label,
+        "Data": base64.b64encode(new_label.encode()).decode()
+    }
+    json_data = json.dumps(payload)
+    content_length = len(json_data)
+
+    sock = socket.create_connection((server_ip, 443))
+
+    settings = HandshakeSettings()
+    settings.keyShares = ["x25519mlkem768"]
+
+    tls_conn = TLSConnection(sock)
+    tls_conn.handshakeClientCert()
+
+    request = (
+        f"POST {url} HTTP/1.1\r\n"
+        f"Host: {server_ip}\r\n"
+        "Content-Type: application/json\r\n"
+        f"Content-Length: {content_length}\r\n"
+        "Connection: close\r\n"
+        "\r\n"
+        f"{json_data}"
+    )
+
+    tls_conn.write(request.encode())
+
+    response = b""
+    while True:
+        chunk = tls_conn.read(4096)
+        if not chunk:
+            break
+        response += chunk
+
+    tls_conn.close()
+
+    header_data, _, body = response.partition(b"\r\n\r\n")
+    status_line = header_data.split(b"\r\n")[0]
+    status_code = int(status_line.split()[1])
+
+    if status_code != 200:
+        raise Exception(f"server returned status {status_code}")
+
+    res = json.loads(body.decode())
+    if not res.get("success", False):
+        error_msg = res.get("ErrorMsg") or "return changelabel request is false"
+        raise Exception(error_msg)
+    if res["data"]["retCode"] != SUCCESS:
+        raise Exception(get_return_code_message(res["data"]["retCode"]))
+
+    return True
 
 def uint16_to_bytes(num: int) -> bytes:
     return struct.pack('>H', num)

@@ -124,3 +124,9 @@ class Ksema:
             raise ValueError("Invalid iv value, must be 16 chars")
         
         return operation_set_iv(self.sess_id, self.server_ip, iv.encode())
+
+    def change_pin(self, old_pin: str, new_pin: str) -> bytes:
+        return operation_change_pin(self.sess_id, self.server_ip, old_pin, new_pin)
+
+    def change_label(self, key_label: str, new_label: str) -> None:
+        return operation_change_label(self.sess_id, self.server_ip, key_label, new_label)
